@@ -5,10 +5,11 @@ import sys
 # Replace this comment with your implementations of the evaluate() and main()
 # functions.
 def evaluate(expression):
-    """ Evaluate a postfix expression.
+    """ Evaluate a postfix expression based on reverse polish notation
 
     Args:
-        expression (str): a string containing a postfix expression.
+        expression (list): a list containing a postfix expression. A list is required for double digit numbers. It is a split stripped string
+        of line from main
 
     Returns:
         float: the value of the expression.
@@ -24,12 +25,19 @@ def evaluate(expression):
     if len(expression) == 0:
         raise ValueError("expression must not be empty")
     if len(expression) == 1:
-        raise ValueError("expression must not be a single character")
+        return float(expression)
+    if len(expression) == 2:
+        if expression[0] == "-":
+            return float(expression)
+    y = expression.strip().split(" ")
 
     x = []
-    for i in expression:
-        if i.isalnum():
+    for i in y:
+        if i.isdigit():
             x.append(int(i))
+        elif len(i) > 1:
+            if i[0] == "-" and i[1].isdigit():
+                x.append(int(i))
         elif i == " ":
             continue
         else:
@@ -57,6 +65,9 @@ def main(filename):
     Args:
         filename (str): the name of the file containing postfix expressions.
     
+    Side effects:
+        prints: line in file followed by equals sign and then final value of line after evaluate called 
+    
     Raises:
         TypeError if filename is not a string
     """
@@ -65,9 +76,8 @@ def main(filename):
 
     with open(filename) as f:
         for line in f:
-            line = line.strip()
             value = evaluate(line)
-            print(f"{line} = {value}")
+            print(f"{line.strip()} = {value}")
 
 
 def parse_args(arglist):
